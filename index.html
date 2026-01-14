@@ -2,151 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>YouTube to MP3 Converter</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YouTube Converter</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-body{
-  min-height:100vh;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  overflow:hidden;
+body {
+  height: 100vh;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Container */
-.container{
-  width:90%;
-  max-width:420px;
-  padding:40px 30px;
-  background:rgba(255,255,255,0.04);
-  border-radius:20px;
-  backdrop-filter:blur(15px);
-  box-shadow:0 0 40px rgba(0,255,255,0.15);
-  text-align:center;
-  animation:fadeIn 1s ease;
+/* Background animation */
+.background {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  animation: moveBg 20s linear infinite;
 }
 
-/* Title */
-.container h1{
-  color:#00ffff;
-  font-weight:600;
-  margin-bottom:10px;
+@keyframes moveBg {
+  from { background-position: 0 0; }
+  to { background-position: 400px 400px; }
 }
 
-.container p{
-  font-size:0.9rem;
-  color:#bbb;
-  margin-bottom:25px;
+/* Card */
+.container {
+  position: relative;
+  z-index: 1;
+  background: rgba(0,0,0,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 40px;
+  width: 360px;
+  backdrop-filter: blur(10px);
+  animation: fadeUp 1s ease;
 }
 
-/* Input */
-input{
-  width:100%;
-  padding:14px 16px;
-  border-radius:12px;
-  border:none;
-  outline:none;
-  background:#0b0b0b;
-  color:#fff;
-  font-size:0.95rem;
-  box-shadow:inset 0 0 0 1px #1f1f1f;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Button */
-button{
-  margin-top:20px;
-  width:100%;
-  padding:14px;
-  border-radius:30px;
-  border:none;
-  background:#00ffff;
-  color:#000;
-  font-weight:600;
-  cursor:pointer;
-  box-shadow:0 0 25px rgba(0,255,255,0.5);
-  transition:0.3s;
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
-button:hover{
-  transform:scale(1.03);
+p {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 25px;
 }
 
-/* Status */
-.status{
-  margin-top:20px;
-  font-size:0.9rem;
-  color:#00ffff;
-  min-height:20px;
+input {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 8px;
+  margin-bottom: 15px;
 }
 
-/* Loader */
-.loader{
-  margin:15px auto 0;
-  width:28px;
-  height:28px;
-  border:3px solid rgba(255,255,255,0.2);
-  border-top:3px solid #00ffff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  display:none;
+select, button {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  cursor: pointer;
 }
 
-/* Animations */
-@keyframes spin{
-  to{transform:rotate(360deg);}
+button {
+  transition: all 0.3s ease;
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
+button:hover {
+  background: #fff;
+  color: #000;
+}
+
+.hidden {
+  display: none;
+}
+
+.status {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
 }
 </style>
 </head>
 
 <body>
+<div class="background"></div>
 
 <div class="container">
-  <h1>YouTube to MP3</h1>
-  <p>Paste a YouTube link and convert it to audio</p>
+  <h1>YouTube Converter</h1>
+  <p>Paste a link and choose format</p>
 
-  <input type="text" id="link" placeholder="https://youtube.com/watch?v=..." />
-  <button onclick="convert()">Convert</button>
+  <input type="text" placeholder="https://youtube.com/watch?v=..." />
 
-  <div class="loader" id="loader"></div>
-  <div class="status" id="status"></div>
+  <select id="format">
+    <option value="">Select format</option>
+    <option value="mp3">MP3 (Audio)</option>
+    <option value="mp4">MP4 (Video)</option>
+  </select>
+
+  <select id="quality" class="hidden"></select>
+
+  <button id="download">Download</button>
+
+  <div class="status hidden" id="status">Preparing download…</div>
 </div>
 
 <script>
-function convert(){
-  const link = document.getElementById("link").value.trim();
-  const status = document.getElementById("status");
-  const loader = document.getElementById("loader");
+const format = document.getElementById("format");
+const quality = document.getElementById("quality");
+const status = document.getElementById("status");
 
-  if(!link){
-    status.textContent = "Please paste a valid YouTube link.";
-    return;
+format.addEventListener("change", () => {
+  quality.innerHTML = "";
+  quality.classList.remove("hidden");
+
+  if (format.value === "mp3") {
+    quality.innerHTML = `
+      <option>192 kbps</option>
+      <option>256 kbps</option>
+    `;
+  } else if (format.value === "mp4") {
+    quality.innerHTML = `
+      <option>720p</option>
+      <option>1080p</option>
+    `;
+  } else {
+    quality.classList.add("hidden");
   }
+});
 
-  status.textContent = "Processing audio...";
-  loader.style.display = "block";
+document.getElementById("download").addEventListener("click", () => {
+  status.classList.remove("hidden");
+  status.textContent = "Preparing download…";
 
-  setTimeout(()=>{
-    loader.style.display = "none";
-    status.textContent = "Audio ready. (Backend coming next)";
+  setTimeout(() => {
+    status.textContent = "This demo is frontend-only.";
   }, 2500);
-}
+});
 </script>
 
 </body>
