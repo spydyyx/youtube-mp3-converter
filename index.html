@@ -1,176 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>YouTube Converter</title>
+  <meta charset="UTF-8" />
+  <title>YT Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-body {
-  height: 100vh;
-  background: #000;
-  color: #fff;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* Background animation */
-.background {
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      rgba(255,255,255,0.02) 0px,
-      rgba(255,255,255,0.02) 1px,
-      transparent 1px,
-      transparent 20px
-    );
-  animation: moveBg 20s linear infinite;
-}
+    .container {
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      border: 1px solid #333;
+      background: #000;
+    }
 
-@keyframes moveBg {
-  from { background-position: 0 0; }
-  to { background-position: 400px 400px; }
-}
+    h1 {
+      text-align: center;
+      font-weight: 300;
+      letter-spacing: 2px;
+      margin-bottom: 30px;
+    }
 
-/* Card */
-.container {
-  position: relative;
-  z-index: 1;
-  background: rgba(0,0,0,0.85);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 40px;
-  width: 360px;
-  backdrop-filter: blur(10px);
-  animation: fadeUp 1s ease;
-}
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      background: #000;
+      border: 1px solid #555;
+      color: #fff;
+      font-size: 14px;
+    }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    input::placeholder {
+      color: #777;
+    }
 
-h1 {
-  text-align: center;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
+    .radio-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
 
-p {
-  text-align: center;
-  font-size: 14px;
-  opacity: 0.7;
-  margin-bottom: 25px;
-}
+    .radio-group label {
+      font-size: 14px;
+    }
 
-input {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #fff;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
+    button {
+      margin-top: 25px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
 
-select, button {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  margin-bottom: 15px;
-  cursor: pointer;
-}
+    button:hover {
+      background: #fff;
+      color: #000;
+    }
 
-button {
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background: #fff;
-  color: #000;
-}
-
-.hidden {
-  display: none;
-}
-
-.status {
-  text-align: center;
-  font-size: 13px;
-  opacity: 0.7;
-}
-</style>
+    .status {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-<div class="background"></div>
 
-<div class="container">
-  <h1>YouTube Converter</h1>
-  <p>Paste a link and choose format</p>
+  <div class="container">
+    <h1>YT CONVERTER</h1>
 
-  <input type="text" placeholder="https://youtube.com/watch?v=..." />
+    <input
+      id="ytLink"
+      type="text"
+      placeholder="Paste YouTube link"
+    />
 
-  <select id="format">
-    <option value="">Select format</option>
-    <option value="mp3">MP3 (Audio)</option>
-    <option value="mp4">MP4 (Video)</option>
-  </select>
+    <div class="radio-group">
+      <label>
+        <input type="radio" name="format" value="mp3" checked />
+        MP3
+      </label>
 
-  <select id="quality" class="hidden"></select>
+      <label>
+        <input type="radio" name="format" value="mp4" />
+        MP4
+      </label>
+    </div>
 
-  <button id="download">Download</button>
+    <select id="quality">
+      <option value="192">192 kbps</option>
+      <option value="256">256 kbps</option>
+      <option value="720">720p</option>
+      <option value="1080">1080p</option>
+    </select>
 
-  <div class="status hidden" id="status">Preparing download…</div>
-</div>
+    <button onclick="startConvert()">DOWNLOAD</button>
 
-<script>
-const format = document.getElementById("format");
-const quality = document.getElementById("quality");
-const status = document.getElementById("status");
+    <div class="status" id="status">
+      Waiting for input…
+    </div>
+  </div>
 
-format.addEventListener("change", () => {
-  quality.innerHTML = "";
-  quality.classList.remove("hidden");
+  <script>
+    const backendURL = "https://render-backend-test.onrender.com";
 
-  if (format.value === "mp3") {
-    quality.innerHTML = `
-      <option>192 kbps</option>
-      <option>256 kbps</option>
-    `;
-  } else if (format.value === "mp4") {
-    quality.innerHTML = `
-      <option>720p</option>
-      <option>1080p</option>
-    `;
-  } else {
-    quality.classList.add("hidden");
-  }
-});
+    async function startConvert() {
+      const ytLink = document.getElementById("ytLink").value;
+      const format = document.querySelector('input[name="format"]:checked').value;
+      const quality = document.getElementById("quality").value;
+      const status = document.getElementById("status");
 
-document.getElementById("download").addEventListener("click", () => {
-  status.classList.remove("hidden");
-  status.textContent = "Preparing download…";
+      if (!ytLink) {
+        alert("Paste a YouTube link first");
+        return;
+      }
 
-  setTimeout(() => {
-    status.textContent = "This demo is frontend-only.";
-  }, 2500);
-});
-</script>
+      status.textContent = "Sending request to backend…";
+
+      try {
+        const response = await fetch(backendURL + "/convert", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            url: ytLink,
+            format: format,
+            quality: quality
+          })
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        status.textContent = "Backend connected ✅ (check console)";
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Backend error ❌";
+      }
+    }
+  </script>
 
 </body>
 </html>
